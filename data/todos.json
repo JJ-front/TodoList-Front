@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "updatedAt": "2026-11-17T09:00:39.364Z",
+  "todos": [
+    {
+      "id": "8762f5b2-5c84-4cc3-a7d2-ad7dc1a5fcc4",
+      "title": "完成Agent简历",
+      "date": "2026-11-17",
+      "done": false,
+      "order": 1,
+      "createdAt": "2026-11-17T08:59:39.170Z"
+    },
+    {
+      "id": "c15b0441-84a4-4a98-9ad9-a8d58d464867",
+      "title": "完成前端简历",
+      "date": "2026-11-17",
+      "done": true,
+      "order": 0,
+      "createdAt": "2026-11-17T08:59:48.010Z"
+    }
+  ]
+}
