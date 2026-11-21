@@ -15,6 +15,7 @@ export default function DayColumn({
   onToggle,
   onRemove,
   onRename,
+  onMeta,
   onMove,
   draggingId,
   onDragStart,
@@ -107,6 +108,7 @@ export default function DayColumn({
         onToggle={onToggle}
         onRemove={onRemove}
         onRename={onRename}
+        onMeta={onMeta}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
       />,

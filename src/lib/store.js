@@ -11,6 +11,8 @@ function normalize(payload) {
       title: t.title,
       date: t.date ?? null,
       done: Boolean(t.done),
+      reason: typeof t.reason === 'string' ? t.reason : '',
+      event: typeof t.event === 'string' ? t.event : '',
       order: Number.isFinite(t.order) ? t.order : i,
       createdAt: t.createdAt ?? new Date().toISOString(),
     }))

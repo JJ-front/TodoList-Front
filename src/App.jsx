@@ -99,6 +99,8 @@ export default function App() {
           title: text,
           date: dateKey,
           done: false,
+          reason: '',
+          event: '',
           order: siblings.length,
           createdAt: new Date().toISOString(),
         },
@@ -112,6 +114,10 @@ export default function App() {
 
   const removeTodo = useCallback((id) => {
     setTodos((prev) => prev.filter((t) => t.id !== id))
+  }, [])
+
+  const setMeta = useCallback((id, field, value) => {
+    setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, [field]: value } : t)))
   }, [])
 
   const renameTodo = useCallback((id, title) => {
@@ -250,6 +256,7 @@ export default function App() {
           onToggle={toggleTodo}
           onRemove={removeTodo}
           onRename={renameTodo}
+          onMeta={setMeta}
           onMove={moveTodo}
           draggingId={dragId}
           onDragStart={setDragId}
@@ -274,6 +281,7 @@ export default function App() {
               onToggle={toggleTodo}
               onRemove={removeTodo}
               onRename={renameTodo}
+              onMeta={setMeta}
               onMove={moveTodo}
               draggingId={dragId}
               onDragStart={setDragId}
