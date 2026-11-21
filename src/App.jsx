@@ -101,6 +101,7 @@ export default function App() {
           done: false,
           reason: '',
           event: '',
+          cost: '',
           order: siblings.length,
           createdAt: new Date().toISOString(),
         },

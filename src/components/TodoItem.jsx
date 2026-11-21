@@ -13,8 +13,9 @@ export default function TodoItem({
 }) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(todo.title)
-  const [metaFocus, setMetaFocus] = useState(false)
+  const [metaEditing, setMetaEditing] = useState(false)
   const inputRef = useRef(null)
+  const metaRef = useRef(null)
 
   useEffect(() => {
     if (editing) {
@@ -22,6 +23,25 @@ export default function TodoItem({
       inputRef.current?.select()
     }
   }, [editing])
+
+  // 双击进入后，点卡片外面自动收起
+  useEffect(() => {
+    if (!metaEditing) return
+    const handleDown = (event) => {
+      if (!metaRef.current?.contains(event.target)) setMetaEditing(false)
+    }
+    document.addEventListener('mousedown', handleDown)
+    return () => document.removeEventListener('mousedown', handleDown)
+  }, [metaEditing])
+
+  const metaFields = [{ key: 'cost', label: '耗时', placeholder: '如 1.5h / 40 分钟' }]
+  if (!todo.done) {
+    metaFields.push(
+      { key: 'reason', label: '原因', placeholder: '为什么没完成' },
+      { key: 'event', label: '事件', placeholder: '相关事件 / 后续安排' },
+    )
+  }
+  const firstEmptyKey = (metaFields.find((field) => !todo[field.key]) ?? metaFields[0]).key
 
   const finish = () => {
     onRename(todo.id, draft)
@@ -33,7 +53,7 @@ export default function TodoItem({
       className={`todo ${todo.done ? 'todo--done' : 'todo--undone'} ${dragging ? 'todo--dragging' : ''}`}
       data-todo-card
       data-todo-id={todo.id}
-      draggable={!editing && !metaFocus}
+      draggable={!editing && !metaEditing}
       onDragStart={(event) => {
         event.dataTransfer.effectAllowed = 'move'
         event.dataTransfer.setData('text/plain', todo.id)
@@ -93,37 +113,45 @@ export default function TodoItem({
         </button>
       </div>
 
-      {!todo.done && (
-        <div
-          className="todo__meta"
-          onDoubleClick={(e) => e.stopPropagation()}
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <label className="meta">
-            <span className="meta__label">原因</span>
-            <input
-              className="meta__input"
-              value={todo.reason ?? ''}
-              placeholder="为什么没完成"
-              onChange={(e) => onMeta(todo.id, 'reason', e.target.value)}
-              onFocus={() => setMetaFocus(true)}
-              onBlur={() => setMetaFocus(false)}
-            />
-          </label>
-          <label className="meta">
-            <span className="meta__label">事件</span>
-            <input
-              className="meta__input"
-              value={todo.event ?? ''}
-              placeholder="相关事件 / 后续安排"
-              onChange={(e) => onMeta(todo.id, 'event', e.target.value)}
-              onFocus={() => setMetaFocus(true)}
-              onBlur={() => setMetaFocus(false)}
-            />
-          </label>
-        </div>
-      )}
+      <div
+        ref={metaRef}
+        className={`todo__meta ${metaEditing ? 'todo__meta--editing' : ''}`}
+        onDoubleClick={(e) => {
+          e.stopPropagation()
+          setMetaEditing(true)
+        }}
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+        title={metaEditing ? undefined : '双击编辑耗时 / 原因 / 事件'}
+      >
+        {metaFields.map((field) =>
+          metaEditing ? (
+            <label className="meta" key={field.key}>
+              <span className="meta__label">{field.label}</span>
+              <input
+                className="meta__input"
+                value={todo[field.key] ?? ''}
+                placeholder={field.placeholder}
+                autoFocus={field.key === firstEmptyKey}
+                onChange={(e) => onMeta(todo.id, field.key, e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === 'Escape') setMetaEditing(false)
+                }}
+              />
+            </label>
+          ) : (
+            <div className="meta" key={field.key}>
+              <span className="meta__label">{field.label}</span>
+              <span
+                className={`meta__value ${todo[field.key] ? '' : 'meta__value--empty'}`}
+                title={todo[field.key] || undefined}
+              >
+                {todo[field.key] || '—'}
+              </span>
+            </div>
+          ),
+        )}
+      </div>
     </div>
   )
 }

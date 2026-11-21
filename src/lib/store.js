@@ -13,6 +13,7 @@ function normalize(payload) {
       done: Boolean(t.done),
       reason: typeof t.reason === 'string' ? t.reason : '',
       event: typeof t.event === 'string' ? t.event : '',
+      cost: typeof t.cost === 'string' ? t.cost : '',
       order: Number.isFinite(t.order) ? t.order : i,
       createdAt: t.createdAt ?? new Date().toISOString(),
     }))

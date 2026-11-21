@@ -551,13 +551,23 @@ button {
   filter: brightness(1.06);
 }
 
-/* 未完成卡片下的「原因 / 事件」输入 */
+/* 未完成卡片下的「耗时 / 原因 / 事件」（双击编辑） */
 .todo__meta {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   padding-left: 24px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.todo__meta:hover .meta__label {
+  color: var(--accent-ink);
+}
+
+.todo__meta--editing {
   cursor: default;
+  gap: 3px;
 }
 
 .meta {
@@ -574,6 +584,27 @@ button {
   line-height: 14px;
   letter-spacing: 0.5px;
   color: var(--muted-2);
+  transition: color 0.15s;
+}
+
+.meta__value {
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px;
+  line-height: 16px;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meta__value--empty {
+  color: var(--muted-2);
+  opacity: 0.75;
+}
+
+.todo--done .meta__value {
+  color: var(--muted);
 }
 
 .meta__input {
