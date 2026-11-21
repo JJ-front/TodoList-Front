@@ -12,7 +12,9 @@ function normalize(payload) {
       date: t.date ?? null,
       done: Boolean(t.done),
       reason: typeof t.reason === 'string' ? t.reason : '',
-      event: typeof t.event === 'string' ? t.event : '',
+      // 「后续安排」新字段；兼容早期写成 event 的数据
+      followup:
+        typeof t.followup === 'string' ? t.followup : typeof t.event === 'string' ? t.event : '',
       cost: typeof t.cost === 'string' ? t.cost : '',
       order: Number.isFinite(t.order) ? t.order : i,
       createdAt: t.createdAt ?? new Date().toISOString(),

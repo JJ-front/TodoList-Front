@@ -100,7 +100,7 @@ export default function App() {
           date: dateKey,
           done: false,
           reason: '',
-          event: '',
+          followup: '',
           cost: '',
           order: siblings.length,
           createdAt: new Date().toISOString(),

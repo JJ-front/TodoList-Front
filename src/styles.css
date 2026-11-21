@@ -579,12 +579,13 @@ button {
 
 .meta__label {
   flex: none;
-  width: 24px;
-  font-size: 10px;
+  width: 44px;
+  font-size: 9px;
   line-height: 14px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.2px;
   color: var(--muted-2);
   transition: color 0.15s;
+  white-space: nowrap;
 }
 
 .meta__value {

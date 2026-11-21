@@ -38,7 +38,7 @@ export default function TodoItem({
   if (!todo.done) {
     metaFields.push(
       { key: 'reason', label: '原因', placeholder: '为什么没完成' },
-      { key: 'event', label: '事件', placeholder: '相关事件 / 后续安排' },
+      { key: 'followup', label: '后续安排', placeholder: '打算什么时候/怎么补上' },
     )
   }
   const firstEmptyKey = (metaFields.find((field) => !todo[field.key]) ?? metaFields[0]).key
