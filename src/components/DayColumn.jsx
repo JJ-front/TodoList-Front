@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import FieldManager from './FieldManager.jsx'
 import TodoItem from './TodoItem.jsx'
 import { IconPlus } from './Icons.jsx'
+import { INBOX_DATE } from '../lib/fields.js'
 
 export default function DayColumn({
   variant,
   dateKey,
+  columnKey = dateKey ?? INBOX_DATE,
   label,
   sublabel,
   badge,
@@ -161,10 +163,10 @@ export default function DayColumn({
       {managing && (
         <FieldManager
           fields={fields}
-          hint={variant === 'inbox' ? '对所有任务卡片生效' : '对本列任务卡片生效'}
-          onAdd={onFieldAdd}
-          onUpdate={onFieldUpdate}
-          onRemove={onFieldRemove}
+          hint="只对本列卡片生效"
+          onAdd={(field) => onFieldAdd(columnKey, field)}
+          onUpdate={(key, patch) => onFieldUpdate(columnKey, key, patch)}
+          onRemove={(key) => onFieldRemove(columnKey, key)}
         />
       )}
 

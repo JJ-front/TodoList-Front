@@ -63,7 +63,7 @@ export default function TodoItem({
         setDraft(todo.title)
         setEditing(true)
       }}
-      title="拖到别的日期即可改排期，双击标题可重命名"
+      title="拖到别的列会自动对齐该列字段，双击标题可重命名"
     >
       <div className="todo__row">
         <button

@@ -17,12 +17,13 @@ import { loadTodos, saveTodos } from './lib/store.js'
 import {
   DEFAULT_RESIDENT_FIELDS,
   DEFAULT_TASK_FIELDS,
+  INBOX_DATE,
   RESIDENT_DATE,
   makeFieldKey,
 } from './lib/fields.js'
 import './styles.css'
 
-const INBOX = '__inbox__'
+const INBOX = INBOX_DATE
 const RESIDENT = RESIDENT_DATE
 
 function makeId() {
@@ -44,9 +45,12 @@ function fieldFromDraft(field) {
 
 export default function App() {
   const [todos, setTodos] = useState([])
-  const [residentFields, setResidentFields] = useState(DEFAULT_RESIDENT_FIELDS)
   const [residentGroupBy, setResidentGroupBy] = useState(null)
-  const [taskFields, setTaskFields] = useState(DEFAULT_TASK_FIELDS)
+  // 每一列一套字段：键为 __inbox__ / 日期（YYYY-MM-DD）/ __resident__
+  const [columnFields, setColumnFields] = useState(() => ({
+    [INBOX]: DEFAULT_TASK_FIELDS.map((field) => ({ ...field })),
+    [RESIDENT]: DEFAULT_RESIDENT_FIELDS.map((field) => ({ ...field })),
+  }))
   const [source, setSource] = useState('loading') // loading | file | local
   const [saveState, setSaveState] = useState('idle') // idle | saving | saved | error
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()))
@@ -61,9 +65,8 @@ export default function App() {
     loadTodos().then((result) => {
       if (!alive) return
       setTodos(result.todos)
-      setResidentFields(result.residentFields)
+      setColumnFields(result.columnFields)
       setResidentGroupBy(result.residentGroupBy)
-      setTaskFields(result.taskFields)
       setSource(result.source)
     })
     return () => {
@@ -79,11 +82,11 @@ export default function App() {
     }
     setSaveState('saving')
     const timer = setTimeout(async () => {
-      const ok = await saveTodos(todos, residentFields, residentGroupBy, taskFields)
+      const ok = await saveTodos(todos, columnFields, residentGroupBy)
       setSaveState(ok ? 'saved' : 'error')
     }, 320)
     return () => clearTimeout(timer)
-  }, [todos, residentFields, residentGroupBy, taskFields, source])
+  }, [todos, columnFields, residentGroupBy, source])
 
   const grouped = useMemo(() => {
     const map = new Map()
@@ -151,44 +154,36 @@ export default function App() {
     )
   }, [])
 
-  const addResidentField = useCallback((field) => {
-    setResidentFields((prev) => [...prev, fieldFromDraft(field)])
+  /** 每列各自的字段增删改：只动 columnFields[columnKey]，其他列不受影响 */
+  const addField = useCallback((columnKey, field) => {
+    setColumnFields((prev) => ({
+      ...prev,
+      [columnKey]: [...(prev[columnKey] ?? []), fieldFromDraft(field)],
+    }))
   }, [])
 
-  const updateResidentField = useCallback((key, patch) => {
-    setResidentFields((prev) =>
-      prev.map((field) => (field.key === key ? { ...field, ...patch } : field)),
-    )
+  const updateField = useCallback((columnKey, key, patch) => {
+    setColumnFields((prev) => ({
+      ...prev,
+      [columnKey]: (prev[columnKey] ?? []).map((field) =>
+        field.key === key ? { ...field, ...patch } : field,
+      ),
+    }))
   }, [])
 
-  const removeResidentField = useCallback((key) => {
-    setResidentFields((prev) => prev.filter((field) => field.key !== key))
-    setResidentGroupBy((prev) => (prev === key ? null : prev))
+  const removeField = useCallback((columnKey, key) => {
+    setColumnFields((prev) => {
+      const list = prev[columnKey] ?? []
+      if (!list.some((field) => field.key === key)) return prev
+      return { ...prev, [columnKey]: list.filter((field) => field.key !== key) }
+    })
+    if (columnKey === RESIDENT) {
+      setResidentGroupBy((prev) => (prev === key ? null : prev))
+    }
+    // 只清掉本列卡片的对应值；其他列的卡片不受影响
     setTodos((prev) =>
       prev.map((t) => {
-        if (t.date !== RESIDENT || !t.values || !(key in t.values)) return t
-        const values = { ...t.values }
-        delete values[key]
-        return { ...t, values }
-      }),
-    )
-  }, [])
-
-  const addTaskField = useCallback((field) => {
-    setTaskFields((prev) => [...prev, fieldFromDraft(field)])
-  }, [])
-
-  const updateTaskField = useCallback((key, patch) => {
-    setTaskFields((prev) =>
-      prev.map((field) => (field.key === key ? { ...field, ...patch } : field)),
-    )
-  }, [])
-
-  const removeTaskField = useCallback((key) => {
-    setTaskFields((prev) => prev.filter((field) => field.key !== key))
-    setTodos((prev) =>
-      prev.map((t) => {
-        if (t.date === RESIDENT || !t.values || !(key in t.values)) return t
+        if ((t.date ?? INBOX) !== columnKey || !t.values || !(key in t.values)) return t
         const values = { ...t.values }
         delete values[key]
         return { ...t, values }
@@ -203,11 +198,35 @@ export default function App() {
     )
   }, [])
 
+  // 事件发生时要先知道卡片来自哪一列，用 ref 镜像一份最新的 todos
+  const todosRef = useRef(todos)
+  todosRef.current = todos
+
   /**
    * 把任务移动到某一天（dateKey 为 null 表示未安排）。
    * index 是“落点在这一列的渲染位置”，若原位置在落点之前需要回退一位。
+   * 跨列拖动时字段自动对齐：目标列比原列多的字段直接在卡片上按空值显示；
+   * 原列比目标列多的字段补进目标列（列里已有卡片按空值显示），已填的值原样保留。
    */
   const moveTodo = useCallback((id, dateKey, index) => {
+    const targetKey = dateKey ?? INBOX
+    const movingNow = todosRef.current.find((t) => t.id === id)
+    if (movingNow) {
+      const sourceKey = movingNow.date ?? INBOX
+      if (sourceKey !== targetKey) {
+        setColumnFields((prev) => {
+          const source = prev[sourceKey] ?? []
+          const target = prev[targetKey] ?? []
+          const known = new Set(target.map((field) => field.key))
+          const missing = source.filter((field) => !known.has(field.key))
+          if (missing.length === 0) return prev
+          return {
+            ...prev,
+            [targetKey]: [...target, ...missing.map((field) => ({ ...field }))],
+          }
+        })
+      }
+    }
     setTodos((prev) => {
       const moving = prev.find((t) => t.id === id)
       if (!moving) return prev
@@ -238,6 +257,26 @@ export default function App() {
   }, [])
 
   const days = useMemo(() => weekDates(weekStart), [weekStart])
+
+  // 某列第一次被渲染到（例如翻到新的一周）时，以「未安排」列的字段为模板补一份自己的，
+  // 之后每列字段的加减互不影响；补上的内容会随保存写进数据文件。
+  useEffect(() => {
+    const keys = [INBOX, RESIDENT, ...days.map(isoDate)]
+    setColumnFields((prev) => {
+      let next = null
+      for (const key of keys) {
+        if (prev[key]) continue
+        next ??= { ...prev }
+        next[key] =
+          key === RESIDENT
+            ? (prev[RESIDENT] ?? DEFAULT_RESIDENT_FIELDS).map((field) => ({ ...field }))
+            : (prev[INBOX] ?? DEFAULT_TASK_FIELDS).map((field) => ({ ...field }))
+      }
+      return next ?? prev
+    })
+  }, [days, columnFields])
+
+  const fieldsFor = (key) => columnFields[key] ?? columnFields[INBOX] ?? DEFAULT_TASK_FIELDS
   const isThisWeek = isoDate(startOfWeek(today)) === isoDate(weekStart)
 
   const offView = useMemo(() => {
@@ -332,16 +371,17 @@ export default function App() {
           label="未安排"
           sublabel="拖入某一天来排期"
           todos={grouped.get(INBOX) ?? []}
-          fields={taskFields}
+          fields={fieldsFor(INBOX)}
+          columnKey={INBOX}
           onAdd={addTodo}
           onToggle={toggleTodo}
           onRemove={removeTodo}
           onRename={renameTodo}
           onMeta={setFieldValue}
           onMove={moveTodo}
-          onFieldAdd={addTaskField}
-          onFieldUpdate={updateTaskField}
-          onFieldRemove={removeTaskField}
+          onFieldAdd={addField}
+          onFieldUpdate={updateField}
+          onFieldRemove={removeField}
           draggingId={dragId}
           onDragStart={setDragId}
           onDragEnd={() => setDragId(null)}
@@ -350,16 +390,17 @@ export default function App() {
         <ResidentColumn
           dateKey={RESIDENT}
           todos={grouped.get(RESIDENT) ?? []}
-          fields={residentFields}
+          fields={fieldsFor(RESIDENT)}
+          columnKey={RESIDENT}
           groupBy={residentGroupBy}
           onGroupBy={setResidentGroupBy}
           onAdd={addTodo}
           onRemove={removeTodo}
           onRename={renameTodo}
           onMeta={setFieldValue}
-          onFieldAdd={addResidentField}
-          onFieldUpdate={updateResidentField}
-          onFieldRemove={removeResidentField}
+          onFieldAdd={addField}
+          onFieldUpdate={updateField}
+          onFieldRemove={removeField}
         />
 
         {days.map((date) => {
@@ -376,16 +417,17 @@ export default function App() {
               isToday={key === todayKey}
               isWeekend={date.getDay() === 0 || date.getDay() === 6}
               todos={grouped.get(key) ?? []}
-              fields={taskFields}
+              fields={fieldsFor(key)}
+              columnKey={key}
               onAdd={addTodo}
               onToggle={toggleTodo}
               onRemove={removeTodo}
               onRename={renameTodo}
               onMeta={setFieldValue}
               onMove={moveTodo}
-              onFieldAdd={addTaskField}
-              onFieldUpdate={updateTaskField}
-              onFieldRemove={removeTaskField}
+              onFieldAdd={addField}
+              onFieldUpdate={updateField}
+              onFieldRemove={removeField}
               draggingId={dragId}
               onDragStart={setDragId}
               onDragEnd={() => setDragId(null)}

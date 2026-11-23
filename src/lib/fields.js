@@ -1,6 +1,9 @@
 /** 常驻任务列的固定标识：不属于任何一天 */
 export const RESIDENT_DATE = '__resident__'
 
+/** 未安排收集箱的固定标识：date 为 null 的任务都算这一列 */
+export const INBOX_DATE = '__inbox__'
+
 /** 常驻任务列的默认字段 */
 export const DEFAULT_RESIDENT_FIELDS = [
   { key: 'progress', label: '进度', type: 'text' },
@@ -20,7 +23,7 @@ export function makeFieldKey() {
 }
 
 /**
- * 字段定义存在数据文件顶层，同一套字段对所有卡片生效。
+ * 规范化一份字段定义（v2 起按列存放在 columnFields 里，每列独立一套）。
  * 传入的不是数组（例如旧数据里没有这个键）时退回默认字段。
  */
 export function normalizeFields(input, defaults) {

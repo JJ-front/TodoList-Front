@@ -2,11 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import FieldManager from './FieldManager.jsx'
 import ResidentItem from './ResidentItem.jsx'
 import { IconPlus } from './Icons.jsx'
+import { RESIDENT_DATE } from '../lib/fields.js'
 
 const EMPTY_GROUP = '__empty__'
 
 export default function ResidentColumn({
   dateKey,
+  columnKey = dateKey ?? RESIDENT_DATE,
   todos,
   fields,
   groupBy,
@@ -157,9 +159,10 @@ export default function ResidentColumn({
       {managing && (
         <FieldManager
           fields={fields}
-          onAdd={onFieldAdd}
-          onUpdate={onFieldUpdate}
-          onRemove={onFieldRemove}
+          hint="只对本列卡片生效"
+          onAdd={(field) => onFieldAdd(columnKey, field)}
+          onUpdate={(key, patch) => onFieldUpdate(columnKey, key, patch)}
+          onRemove={(key) => onFieldRemove(columnKey, key)}
         />
       )}
 

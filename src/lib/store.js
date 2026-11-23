@@ -1,11 +1,16 @@
 import {
+  INBOX_DATE,
   RESIDENT_DATE,
+  normalizeFields,
   normalizeResidentFields,
   normalizeTaskFields,
 } from './fields.js'
 
 const API_URL = '/api/todos'
 const STORAGE_KEY = 'todolist-front::todos'
+
+const INBOX = INBOX_DATE
+const RESIDENT = RESIDENT_DATE
 
 function normalizeValues(t) {
   const values = {}
@@ -49,23 +54,59 @@ function normalizeTodo(t, i) {
   return todo
 }
 
+function cloneFields(list) {
+  return list.map((field) => ({ ...field }))
+}
+
+/**
+ * v2：字段按列存放在 columnFields 里，键为 __inbox__ / 日期（YYYY-MM-DD）/ __resident__，
+ * 每一列一套，增删互不影响。
+ * 兼容 v1（顶层共享的 taskFields / residentFields）：拆成每个出现过的任务列各一份，
+ * 常驻列沿用 residentFields，旧数据打开后的显示和拆分前一致。
+ */
+function normalizeColumnFields(payload, todos, taskFields, residentFields) {
+  const map = {}
+  const raw = payload?.columnFields
+  const hasRaw = raw && typeof raw === 'object' && !Array.isArray(raw)
+
+  if (hasRaw) {
+    for (const [key, list] of Object.entries(raw)) {
+      if (typeof key !== 'string' || !key.trim()) continue
+      map[key] = normalizeFields(list, [])
+    }
+    // 半新半旧的数据里缺的入口，用旧字段补齐
+    if (!map[INBOX]) map[INBOX] = cloneFields(taskFields)
+    if (!map[RESIDENT]) map[RESIDENT] = cloneFields(residentFields)
+    return map
+  }
+
+  map[INBOX] = cloneFields(taskFields)
+  map[RESIDENT] = cloneFields(residentFields)
+  for (const todo of todos) {
+    const key = todo.date ?? INBOX
+    if (!map[key]) map[key] = cloneFields(taskFields)
+  }
+  return map
+}
+
 function normalizePayload(payload) {
-  const list = Array.isArray(payload) ? payload : payload?.todos
+  const isObject = payload && typeof payload === 'object' && !Array.isArray(payload)
+  const list = Array.isArray(payload) ? payload : isObject ? payload.todos : undefined
   const todos = Array.isArray(list)
     ? list.filter((t) => t && typeof t.title === 'string').map(normalizeTodo)
     : []
+  const taskFields = normalizeTaskFields(isObject ? payload.taskFields : undefined)
+  const residentFields = normalizeResidentFields(isObject ? payload.residentFields : undefined)
   return {
     todos,
-    residentFields: normalizeResidentFields(
-      Array.isArray(payload) ? undefined : payload?.residentFields,
+    columnFields: normalizeColumnFields(
+      isObject ? payload : null,
+      todos,
+      taskFields,
+      residentFields,
     ),
     residentGroupBy:
-      !Array.isArray(payload) && typeof payload?.residentGroupBy === 'string'
-        ? payload.residentGroupBy
-        : null,
-    taskFields: normalizeTaskFields(
-      Array.isArray(payload) ? undefined : payload?.taskFields,
-    ),
+      isObject && typeof payload.residentGroupBy === 'string' ? payload.residentGroupBy : null,
   }
 }
 
@@ -79,11 +120,11 @@ function readLocal() {
   }
 }
 
-function writeLocal(todos, residentFields, residentGroupBy, taskFields) {
+function writeLocal(todos, columnFields, residentGroupBy) {
   try {
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ version: 1, todos, residentFields, residentGroupBy, taskFields }),
+      JSON.stringify({ version: 2, todos, columnFields, residentGroupBy }),
     )
     return true
   } catch {
@@ -111,8 +152,8 @@ export async function loadTodos() {
   return { ...readLocal(), source: 'local' }
 }
 
-export async function saveTodos(todos, residentFields, residentGroupBy, taskFields) {
-  const body = JSON.stringify({ version: 1, todos, residentFields, residentGroupBy, taskFields })
+export async function saveTodos(todos, columnFields, residentGroupBy) {
+  const body = JSON.stringify({ version: 2, todos, columnFields, residentGroupBy })
   try {
     const res = await fetch(API_URL, {
       method: 'PUT',
@@ -123,5 +164,5 @@ export async function saveTodos(todos, residentFields, residentGroupBy, taskFiel
   } catch {
     /* 继续尝试本地存储 */
   }
-  return writeLocal(todos, residentFields, residentGroupBy, taskFields)
+  return writeLocal(todos, columnFields, residentGroupBy)
 }

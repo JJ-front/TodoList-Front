@@ -1,40 +1,77 @@
 {
-  "version": 1,
-  "updatedAt": "2026-11-23T14:43:15.512Z",
-  "residentFields": [
-    {
-      "key": "progress",
-      "label": "进度",
-      "type": "text"
-    },
-    {
-      "key": "url",
-      "label": "链接",
-      "type": "link"
-    },
-    {
-      "key": "field-37525936-363c-4936-93e0-c3494619ecb8",
-      "label": "投递渠道",
-      "type": "text"
-    },
-    {
-      "key": "field-03d3ad5b-39a4-44d3-9dd6-eb1896a5c57f",
-      "label": "岗位",
-      "type": "text"
-    },
-    {
-      "key": "field-239dae3b-b40c-4698-a600-7dceab1384e7",
-      "label": "城市",
-      "type": "text"
-    },
-    {
-      "key": "field-480a45e3-86c5-4adc-a561-cc5392390aaf",
-      "label": "状态",
-      "type": "text"
-    }
-  ],
+  "version": 2,
+  "updatedAt": "2026-11-23T15:21:54.072Z",
+  "columnFields": {
+    "__inbox__": [
+      {
+        "key": "field-a5babe5c-bba0-40c9-b921-986e1cf46397",
+        "label": "链接",
+        "type": "text"
+      },
+      {
+        "key": "field-c8b35768-c718-41ff-b761-e101b323cfdd",
+        "label": "耗时",
+        "type": "text"
+      }
+    ],
+    "__resident__": [
+      {
+        "key": "progress",
+        "label": "进度",
+        "type": "text"
+      },
+      {
+        "key": "url",
+        "label": "链接",
+        "type": "link"
+      },
+      {
+        "key": "field-37525936-363c-4936-93e0-c3494619ecb8",
+        "label": "投递渠道",
+        "type": "text"
+      },
+      {
+        "key": "field-03d3ad5b-39a4-44d3-9dd6-eb1896a5c57f",
+        "label": "岗位",
+        "type": "text"
+      },
+      {
+        "key": "field-239dae3b-b40c-4698-a600-7dceab1384e7",
+        "label": "城市",
+        "type": "text"
+      },
+      {
+        "key": "field-480a45e3-86c5-4adc-a561-cc5392390aaf",
+        "label": "状态",
+        "type": "text"
+      }
+    ],
+    "2026-11-17": [],
+    "2026-11-18": [],
+    "2026-11-19": [],
+    "2026-11-20": [],
+    "2026-11-21": [],
+    "2026-11-23": [
+      {
+        "key": "field-c8b35768-c718-41ff-b761-e101b323cfdd",
+        "label": "耗时",
+        "type": "text"
+      },
+      {
+        "key": "field-a5babe5c-bba0-40c9-b921-986e1cf46397",
+        "label": "链接",
+        "type": "text"
+      }
+    ],
+    "2026-11-22": [],
+    "2026-11-24": [],
+    "2026-11-25": [],
+    "2026-11-26": [],
+    "2026-11-27": [],
+    "2026-11-28": [],
+    "2026-11-29": []
+  },
   "residentGroupBy": null,
-  "taskFields": [],
   "todos": [
     {
       "id": "c15b0441-84a4-4a98-9ad9-a8d58d464867",
@@ -209,9 +246,8 @@
       "reason": "",
       "followup": "",
       "cost": "",
-      "order": 0,
-      "createdAt": "2026-11-21T08:54:49.517Z",
-      "values": {}
+      "order": 1,
+      "createdAt": "2026-11-21T08:54:49.517Z"
     },
     {
       "id": "c76a0abe-31c3-427d-b6a3-7db0de88c389",
@@ -439,9 +475,8 @@
       "reason": "",
       "followup": "",
       "cost": "",
-      "order": 1,
-      "createdAt": "2026-11-23T13:47:00.667Z",
-      "values": {}
+      "order": 0,
+      "createdAt": "2026-11-23T13:47:00.667Z"
     },
     {
       "id": "36098479-537a-422a-bd0d-11409044fdab",
@@ -452,8 +487,7 @@
       "followup": "",
       "cost": "",
       "order": 2,
-      "createdAt": "2026-11-23T13:48:33.059Z",
-      "values": {}
+      "createdAt": "2026-11-23T13:48:33.059Z"
     },
     {
       "id": "e2680ba0-82c8-4a70-9f79-2823a9593a17",
@@ -464,8 +498,7 @@
       "followup": "",
       "cost": "",
       "order": 3,
-      "createdAt": "2026-11-23T13:49:59.339Z",
-      "values": {}
+      "createdAt": "2026-11-23T13:49:59.339Z"
     },
     {
       "id": "96c5e4c2-6687-49e1-bf18-6bb99af24137",
@@ -476,8 +509,7 @@
       "followup": "",
       "cost": "",
       "order": 4,
-      "createdAt": "2026-11-23T14:15:05.866Z",
-      "values": {}
+      "createdAt": "2026-11-23T14:15:05.866Z"
     },
     {
       "id": "73c5f2da-5d0b-43db-ae92-38855df70963",
@@ -488,8 +520,7 @@
       "followup": "",
       "cost": "",
       "order": 5,
-      "createdAt": "2026-11-23T14:16:06.641Z",
-      "values": {}
+      "createdAt": "2026-11-23T14:16:06.641Z"
     }
   ]
 }

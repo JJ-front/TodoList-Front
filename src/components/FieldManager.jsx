@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { IconClose, IconPlus } from './Icons.jsx'
 import { makeFieldKey } from '../lib/fields.js'
 
-export default function FieldManager({ fields, hint = '对所有卡片生效', onAdd, onUpdate, onRemove }) {
+export default function FieldManager({ fields, hint = '只对本列卡片生效', onAdd, onUpdate, onRemove }) {
   const [focusKey, setFocusKey] = useState(null)
 
   const handleAdd = () => {
