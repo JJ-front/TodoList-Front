@@ -59,6 +59,10 @@ function normalizePayload(payload) {
     residentFields: normalizeResidentFields(
       Array.isArray(payload) ? undefined : payload?.residentFields,
     ),
+    residentGroupBy:
+      !Array.isArray(payload) && typeof payload?.residentGroupBy === 'string'
+        ? payload.residentGroupBy
+        : null,
     taskFields: normalizeTaskFields(
       Array.isArray(payload) ? undefined : payload?.taskFields,
     ),
@@ -75,11 +79,11 @@ function readLocal() {
   }
 }
 
-function writeLocal(todos, residentFields, taskFields) {
+function writeLocal(todos, residentFields, residentGroupBy, taskFields) {
   try {
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ version: 1, todos, residentFields, taskFields }),
+      JSON.stringify({ version: 1, todos, residentFields, residentGroupBy, taskFields }),
     )
     return true
   } catch {
@@ -107,8 +111,8 @@ export async function loadTodos() {
   return { ...readLocal(), source: 'local' }
 }
 
-export async function saveTodos(todos, residentFields, taskFields) {
-  const body = JSON.stringify({ version: 1, todos, residentFields, taskFields })
+export async function saveTodos(todos, residentFields, residentGroupBy, taskFields) {
+  const body = JSON.stringify({ version: 1, todos, residentFields, residentGroupBy, taskFields })
   try {
     const res = await fetch(API_URL, {
       method: 'PUT',
@@ -119,5 +123,5 @@ export async function saveTodos(todos, residentFields, taskFields) {
   } catch {
     /* 继续尝试本地存储 */
   }
-  return writeLocal(todos, residentFields, taskFields)
+  return writeLocal(todos, residentFields, residentGroupBy, taskFields)
 }

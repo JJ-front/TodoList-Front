@@ -138,16 +138,14 @@ export default function DayColumn({
           <span className="col__label">{label}</span>
           {badge && <span className="col__badge">{badge}</span>}
           {isToday && !badge && <span className="col__badge">今天</span>}
-          {variant === 'inbox' && (
-            <button
-              type="button"
-              className={`col__config ${managing ? 'col__config--on' : ''}`}
-              aria-expanded={managing}
-              onClick={() => setManaging((value) => !value)}
-            >
-              字段
-            </button>
-          )}
+          <button
+            type="button"
+            className={`col__config ${managing ? 'col__config--on' : ''}`}
+            aria-expanded={managing}
+            onClick={() => setManaging((value) => !value)}
+          >
+            字段
+          </button>
         </div>
         <span className="col__sublabel">{sublabel}</span>
         <div className="col__progress">
@@ -160,10 +158,10 @@ export default function DayColumn({
         </div>
       </header>
 
-      {variant === 'inbox' && managing && (
+      {managing && (
         <FieldManager
           fields={fields}
-          hint="对所有任务卡片生效"
+          hint={variant === 'inbox' ? '对所有任务卡片生效' : '对本列任务卡片生效'}
           onAdd={onFieldAdd}
           onUpdate={onFieldUpdate}
           onRemove={onFieldRemove}

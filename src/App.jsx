@@ -45,6 +45,7 @@ function fieldFromDraft(field) {
 export default function App() {
   const [todos, setTodos] = useState([])
   const [residentFields, setResidentFields] = useState(DEFAULT_RESIDENT_FIELDS)
+  const [residentGroupBy, setResidentGroupBy] = useState(null)
   const [taskFields, setTaskFields] = useState(DEFAULT_TASK_FIELDS)
   const [source, setSource] = useState('loading') // loading | file | local
   const [saveState, setSaveState] = useState('idle') // idle | saving | saved | error
@@ -61,6 +62,7 @@ export default function App() {
       if (!alive) return
       setTodos(result.todos)
       setResidentFields(result.residentFields)
+      setResidentGroupBy(result.residentGroupBy)
       setTaskFields(result.taskFields)
       setSource(result.source)
     })
@@ -77,11 +79,11 @@ export default function App() {
     }
     setSaveState('saving')
     const timer = setTimeout(async () => {
-      const ok = await saveTodos(todos, residentFields, taskFields)
+      const ok = await saveTodos(todos, residentFields, residentGroupBy, taskFields)
       setSaveState(ok ? 'saved' : 'error')
     }, 320)
     return () => clearTimeout(timer)
-  }, [todos, residentFields, taskFields, source])
+  }, [todos, residentFields, residentGroupBy, taskFields, source])
 
   const grouped = useMemo(() => {
     const map = new Map()
@@ -161,6 +163,7 @@ export default function App() {
 
   const removeResidentField = useCallback((key) => {
     setResidentFields((prev) => prev.filter((field) => field.key !== key))
+    setResidentGroupBy((prev) => (prev === key ? null : prev))
     setTodos((prev) =>
       prev.map((t) => {
         if (t.date !== RESIDENT || !t.values || !(key in t.values)) return t
@@ -348,6 +351,8 @@ export default function App() {
           dateKey={RESIDENT}
           todos={grouped.get(RESIDENT) ?? []}
           fields={residentFields}
+          groupBy={residentGroupBy}
+          onGroupBy={setResidentGroupBy}
           onAdd={addTodo}
           onRemove={removeTodo}
           onRename={renameTodo}
@@ -378,6 +383,9 @@ export default function App() {
               onRename={renameTodo}
               onMeta={setFieldValue}
               onMove={moveTodo}
+              onFieldAdd={addTaskField}
+              onFieldUpdate={updateTaskField}
+              onFieldRemove={removeTaskField}
               draggingId={dragId}
               onDragStart={setDragId}
               onDragEnd={() => setDragId(null)}

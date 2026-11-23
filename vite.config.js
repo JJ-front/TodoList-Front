@@ -46,6 +46,8 @@ function todosFileApiPlugin() {
             version: 1,
             updatedAt: new Date().toISOString(),
             residentFields: Array.isArray(parsed.residentFields) ? parsed.residentFields : [],
+            residentGroupBy:
+              typeof parsed.residentGroupBy === 'string' ? parsed.residentGroupBy : null,
             taskFields: Array.isArray(parsed.taskFields) ? parsed.taskFields : [],
             todos: Array.isArray(parsed.todos) ? parsed.todos : [],
           }
