@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { IconCheck, IconClose } from './Icons.jsx'
+import { toHref } from '../lib/fields.js'
 
 export default function TodoItem({
   todo,
+  fields = [],
   dragging,
   onToggle,
   onRemove,
@@ -16,6 +18,12 @@ export default function TodoItem({
   const [metaEditing, setMetaEditing] = useState(false)
   const inputRef = useRef(null)
   const metaRef = useRef(null)
+
+  const values = todo.values ?? {}
+  // values 优先；旧数据里的 cost / reason / followup 平铺在卡片上，作为回退
+  const valueOf = (field) => values[field.key] ?? todo[field.key] ?? ''
+  const visibleFields = fields.filter((field) => !(field.hideWhenDone && todo.done))
+  const firstEmptyKey = (visibleFields.find((field) => !valueOf(field)) ?? visibleFields[0])?.key
 
   useEffect(() => {
     if (editing) {
@@ -33,15 +41,6 @@ export default function TodoItem({
     document.addEventListener('mousedown', handleDown)
     return () => document.removeEventListener('mousedown', handleDown)
   }, [metaEditing])
-
-  const metaFields = [{ key: 'cost', label: '耗时', placeholder: '如 1.5h / 40 分钟' }]
-  if (!todo.done) {
-    metaFields.push(
-      { key: 'reason', label: '原因', placeholder: '为什么没完成' },
-      { key: 'followup', label: '后续安排', placeholder: '打算什么时候/怎么补上' },
-    )
-  }
-  const firstEmptyKey = (metaFields.find((field) => !todo[field.key]) ?? metaFields[0]).key
 
   const finish = () => {
     onRename(todo.id, draft)
@@ -113,45 +112,66 @@ export default function TodoItem({
         </button>
       </div>
 
-      <div
-        ref={metaRef}
-        className={`todo__meta ${metaEditing ? 'todo__meta--editing' : ''}`}
-        onDoubleClick={(e) => {
-          e.stopPropagation()
-          setMetaEditing(true)
-        }}
-        onMouseDown={(e) => e.stopPropagation()}
-        onClick={(e) => e.stopPropagation()}
-        title={metaEditing ? undefined : '双击编辑耗时 / 原因 / 事件'}
-      >
-        {metaFields.map((field) =>
-          metaEditing ? (
-            <label className="meta" key={field.key}>
-              <span className="meta__label">{field.label}</span>
-              <input
-                className="meta__input"
-                value={todo[field.key] ?? ''}
-                placeholder={field.placeholder}
-                autoFocus={field.key === firstEmptyKey}
-                onChange={(e) => onMeta(todo.id, field.key, e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === 'Escape') setMetaEditing(false)
-                }}
-              />
-            </label>
-          ) : (
-            <div className="meta" key={field.key}>
-              <span className="meta__label">{field.label}</span>
-              <span
-                className={`meta__value ${todo[field.key] ? '' : 'meta__value--empty'}`}
-                title={todo[field.key] || undefined}
-              >
-                {todo[field.key] || '—'}
-              </span>
-            </div>
-          ),
-        )}
-      </div>
+      {visibleFields.length > 0 && (
+        <div
+          ref={metaRef}
+          className={`todo__meta ${metaEditing ? 'todo__meta--editing' : ''}`}
+          onDoubleClick={(e) => {
+            e.stopPropagation()
+            setMetaEditing(true)
+          }}
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+          title={metaEditing ? undefined : '双击编辑字段'}
+        >
+          {visibleFields.map((field) =>
+            metaEditing ? (
+              <label className="meta" key={field.key}>
+                <span className="meta__label" title={field.label}>
+                  {field.label}
+                </span>
+                <input
+                  className="meta__input"
+                  value={valueOf(field)}
+                  placeholder={
+                    field.type === 'link' ? '链接地址，如 zhipin.com/xxx' : `填写${field.label}`
+                  }
+                  autoFocus={field.key === firstEmptyKey}
+                  onChange={(e) => onMeta(todo.id, field.key, e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === 'Escape') setMetaEditing(false)
+                  }}
+                />
+              </label>
+            ) : (
+              <div className="meta" key={field.key}>
+                <span className="meta__label" title={field.label}>
+                  {field.label}
+                </span>
+                {field.type === 'link' && valueOf(field) ? (
+                  <a
+                    className="meta__link"
+                    href={toHref(valueOf(field))}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    title={valueOf(field)}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {valueOf(field)}
+                  </a>
+                ) : (
+                  <span
+                    className={`meta__value ${valueOf(field) ? '' : 'meta__value--empty'}`}
+                    title={valueOf(field) || undefined}
+                  >
+                    {valueOf(field) || '—'}
+                  </span>
+                )}
+              </div>
+            ),
+          )}
+        </div>
+      )}
     </div>
   )
 }

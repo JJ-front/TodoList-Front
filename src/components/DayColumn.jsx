@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import FieldManager from './FieldManager.jsx'
 import TodoItem from './TodoItem.jsx'
 import { IconPlus } from './Icons.jsx'
 
@@ -11,18 +12,23 @@ export default function DayColumn({
   isToday = false,
   isWeekend = false,
   todos,
+  fields,
   onAdd,
   onToggle,
   onRemove,
   onRename,
   onMeta,
   onMove,
+  onFieldAdd,
+  onFieldUpdate,
+  onFieldRemove,
   draggingId,
   onDragStart,
   onDragEnd,
 }) {
   const [adding, setAdding] = useState(false)
   const [draft, setDraft] = useState('')
+  const [managing, setManaging] = useState(false)
   const [dropIndex, setDropIndex] = useState(null)
   const listRef = useRef(null)
   const inputRef = useRef(null)
@@ -104,6 +110,7 @@ export default function DayColumn({
       <TodoItem
         key={todo.id}
         todo={todo}
+        fields={fields}
         dragging={draggingId === todo.id}
         onToggle={onToggle}
         onRemove={onRemove}
@@ -131,6 +138,16 @@ export default function DayColumn({
           <span className="col__label">{label}</span>
           {badge && <span className="col__badge">{badge}</span>}
           {isToday && !badge && <span className="col__badge">今天</span>}
+          {variant === 'inbox' && (
+            <button
+              type="button"
+              className={`col__config ${managing ? 'col__config--on' : ''}`}
+              aria-expanded={managing}
+              onClick={() => setManaging((value) => !value)}
+            >
+              字段
+            </button>
+          )}
         </div>
         <span className="col__sublabel">{sublabel}</span>
         <div className="col__progress">
@@ -142,6 +159,16 @@ export default function DayColumn({
           </span>
         </div>
       </header>
+
+      {variant === 'inbox' && managing && (
+        <FieldManager
+          fields={fields}
+          hint="对所有任务卡片生效"
+          onAdd={onFieldAdd}
+          onUpdate={onFieldUpdate}
+          onRemove={onFieldRemove}
+        />
+      )}
 
       <div className="col__list" ref={listRef}>
         {rows}

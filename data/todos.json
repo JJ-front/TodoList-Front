@@ -1,22 +1,465 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-17T09:00:39.364Z",
-  "todos": [
+  "updatedAt": "2026-11-23T14:02:42.145Z",
+  "residentFields": [
     {
-      "id": "8762f5b2-5c84-4cc3-a7d2-ad7dc1a5fcc4",
-      "title": "完成Agent简历",
-      "date": "2026-11-17",
-      "done": false,
-      "order": 1,
-      "createdAt": "2026-11-17T08:59:39.170Z"
+      "key": "progress",
+      "label": "进度",
+      "type": "text"
     },
+    {
+      "key": "url",
+      "label": "链接",
+      "type": "link"
+    },
+    {
+      "key": "field-37525936-363c-4936-93e0-c3494619ecb8",
+      "label": "投递渠道",
+      "type": "text"
+    },
+    {
+      "key": "field-03d3ad5b-39a4-44d3-9dd6-eb1896a5c57f",
+      "label": "岗位",
+      "type": "text"
+    },
+    {
+      "key": "field-239dae3b-b40c-4698-a600-7dceab1384e7",
+      "label": "城市",
+      "type": "text"
+    },
+    {
+      "key": "field-480a45e3-86c5-4adc-a561-cc5392390aaf",
+      "label": "状态",
+      "type": "text"
+    }
+  ],
+  "todos": [
     {
       "id": "c15b0441-84a4-4a98-9ad9-a8d58d464867",
       "title": "完成前端简历",
       "date": "2026-11-17",
       "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "3h",
       "order": 0,
       "createdAt": "2026-11-17T08:59:48.010Z"
+    },
+    {
+      "id": "850f2262-98a4-474f-b5e2-109a2bc64058",
+      "title": "约会",
+      "date": "2026-11-18",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "1pd",
+      "order": 0,
+      "createdAt": "2026-11-20T05:25:55.095Z"
+    },
+    {
+      "id": "3c9b5d44-0df3-42f5-b321-65231c6e6c49",
+      "title": "约会",
+      "date": "2026-11-19",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "1pd",
+      "order": 0,
+      "createdAt": "2026-11-20T05:26:03.031Z"
+    },
+    {
+      "id": "f0353d2f-18f3-4c3f-b4a8-376803e7cc58",
+      "title": "种植牙2期",
+      "date": "2026-11-20",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "3h",
+      "order": 0,
+      "createdAt": "2026-11-20T05:26:16.416Z"
+    },
+    {
+      "id": "25a3b8a8-6042-493c-9a2d-d73fe8378304",
+      "title": "Agent简历修改",
+      "date": "2026-11-20",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "0.5h",
+      "order": 1,
+      "createdAt": "2026-11-20T05:26:37.927Z"
+    },
+    {
+      "id": "63d45dd4-7bd2-47e1-aa89-dfcfbdcd813d",
+      "title": "前端简历修改",
+      "date": "2026-11-20",
+      "done": false,
+      "reason": "偷懒了",
+      "followup": "明天完成",
+      "cost": "",
+      "order": 2,
+      "createdAt": "2026-11-20T05:26:44.688Z"
+    },
+    {
+      "id": "9a1c6045-9801-4d47-8577-bd1b5456e180",
+      "title": "前端简历修改",
+      "date": "2026-11-21",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "0.5h",
+      "order": 0,
+      "createdAt": "2026-11-21T08:44:37.533Z"
+    },
+    {
+      "id": "6b00ecab-a266-4c93-8547-d84d29701d9a",
+      "title": "投递Agent 150份简历投递",
+      "date": "2026-11-20",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "1h",
+      "order": 3,
+      "createdAt": "2026-11-21T08:44:47.069Z"
+    },
+    {
+      "id": "09d4cc9b-bcc8-4777-bbef-3383d4c52686",
+      "title": "投递前端150份简历投递",
+      "date": "2026-11-20",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "1h",
+      "order": 4,
+      "createdAt": "2026-11-21T08:44:55.069Z"
+    },
+    {
+      "id": "34a4f4e9-39b8-4c89-989f-e4418a809973",
+      "title": "投递Agent 150简历",
+      "date": "2026-11-21",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "1h",
+      "order": 1,
+      "createdAt": "2026-11-21T08:46:15.756Z"
+    },
+    {
+      "id": "a4141ac0-8a6d-4b50-9f19-3a4f4d51bfc9",
+      "title": "广州Agent面试-抖送-初面",
+      "date": "2026-11-23",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "1h",
+      "order": 0,
+      "createdAt": "2026-11-21T08:47:24.093Z"
+    },
+    {
+      "id": "0b4f5d37-59a5-4804-9579-1138ba841bcb",
+      "title": "深圳Agent面试-恪尽职守-初面",
+      "date": "2026-11-23",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "20min",
+      "order": 1,
+      "createdAt": "2026-11-21T08:47:45.268Z"
+    },
+    {
+      "id": "a9cd7773-ce7a-4197-800a-1b096cb16b96",
+      "title": "完成Agent简历",
+      "date": "2026-11-17",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "3h",
+      "order": 1,
+      "createdAt": "2026-11-21T08:48:30.260Z"
+    },
+    {
+      "id": "88068a42-9c4d-4656-9c67-74a4391679fe",
+      "title": "准备面试题-机器面试-python部分",
+      "date": "2026-11-21",
+      "done": false,
+      "reason": "",
+      "followup": "",
+      "cost": "",
+      "order": 2,
+      "createdAt": "2026-11-21T08:52:15.396Z"
+    },
+    {
+      "id": "6b66a4bd-827a-47c2-86ed-bbd675e8ee86",
+      "title": "杭州python面试-赢云贸易-初面",
+      "date": "2026-11-22",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "30min",
+      "order": 0,
+      "createdAt": "2026-11-21T08:54:23.204Z"
+    },
+    {
+      "id": "2f8ee303-15b0-427a-97de-3d7ad96c970c",
+      "title": "杭州全栈面试-赢云贸易-一面",
+      "date": null,
+      "done": false,
+      "reason": "",
+      "followup": "",
+      "cost": "",
+      "order": 0,
+      "createdAt": "2026-11-21T08:54:49.517Z"
+    },
+    {
+      "id": "c76a0abe-31c3-427d-b6a3-7db0de88c389",
+      "title": "150份Agent简历投递",
+      "date": "2026-11-22",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "1h",
+      "order": 1,
+      "createdAt": "2026-11-23T07:10:34.761Z"
+    },
+    {
+      "id": "cacf38f5-0537-4d53-a60c-5c718c9b2f7c",
+      "title": "150份前端简历投递",
+      "date": "2026-11-22",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "1h",
+      "order": 2,
+      "createdAt": "2026-11-23T07:10:41.953Z"
+    },
+    {
+      "id": "f14e4773-2d1f-4717-963b-450f93aa772f",
+      "title": "模拟面试",
+      "date": "2026-11-22",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "1h",
+      "order": 3,
+      "createdAt": "2026-11-23T07:10:46.601Z"
+    },
+    {
+      "id": "c4956e2f-aa9c-43ec-9542-3544f90e6fc3",
+      "title": "面试题准备",
+      "date": "2026-11-22",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "2h",
+      "order": 4,
+      "createdAt": "2026-11-23T07:10:53.168Z"
+    },
+    {
+      "id": "f3d1f447-9047-4673-a434-8de670b00058",
+      "title": "150份Agent简历",
+      "date": "2026-11-23",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "1h",
+      "order": 2,
+      "createdAt": "2026-11-23T07:22:00.291Z"
+    },
+    {
+      "id": "2d3ab19a-94fd-4514-b5f6-348f4739f563",
+      "title": "150份前端简历",
+      "date": "2026-11-23",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "1h",
+      "order": 3,
+      "createdAt": "2026-11-23T07:22:05.767Z"
+    },
+    {
+      "id": "110ae360-55a9-473b-9818-ac32454aeb68",
+      "title": "简历沟通",
+      "date": "2026-11-23",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "1h",
+      "order": 4,
+      "createdAt": "2026-11-23T07:22:22.312Z"
+    },
+    {
+      "id": "91e2a49f-658d-45d1-9bc7-3a43f519bdc8",
+      "title": "牛客60份简历投递",
+      "date": "2026-11-23",
+      "done": true,
+      "reason": "",
+      "followup": "",
+      "cost": "0.5h",
+      "order": 5,
+      "createdAt": "2026-11-23T07:23:14.176Z"
+    },
+    {
+      "id": "c68d0d70-88e2-4615-ba8d-476a18ddda4c",
+      "title": "北京掌上先机网络",
+      "date": "__resident__",
+      "done": false,
+      "reason": "",
+      "followup": "",
+      "cost": "",
+      "order": 0,
+      "createdAt": "2026-11-23T07:56:30.851Z",
+      "values": {
+        "progress": "简历初筛",
+        "url": "https://huicecom.zhiye.com/form?fromPage=printResume&id=166041175&jobAdId=f0962876-608d-425e-82d0-49318b990ab8&wishIndex=0",
+        "field-37525936-363c-4936-93e0-c3494619ecb8": "官网",
+        "field-03d3ad5b-39a4-44d3-9dd6-eb1896a5c57f": "前端",
+        "field-239dae3b-b40c-4698-a600-7dceab1384e7": "北京",
+        "field-480a45e3-86c5-4adc-a561-cc5392390aaf": "待反馈"
+      }
+    },
+    {
+      "id": "43c0e509-27ae-4f9b-afe2-da8db97a9bcb",
+      "title": "滴滴",
+      "date": "__resident__",
+      "done": false,
+      "reason": "",
+      "followup": "",
+      "cost": "",
+      "values": {
+        "progress": "简历初筛",
+        "url": "https://talent.didiglobal.com/social/myResume?tab=delivery",
+        "field-37525936-363c-4936-93e0-c3494619ecb8": "官网",
+        "field-03d3ad5b-39a4-44d3-9dd6-eb1896a5c57f": "Agent开发",
+        "field-239dae3b-b40c-4698-a600-7dceab1384e7": "北京",
+        "field-480a45e3-86c5-4adc-a561-cc5392390aaf": "待反馈"
+      },
+      "order": 1,
+      "createdAt": "2026-11-23T08:12:07.184Z"
+    },
+    {
+      "id": "3786700c-687e-4264-b80b-fb7fc68e547f",
+      "title": "京东",
+      "date": "__resident__",
+      "done": false,
+      "reason": "",
+      "followup": "",
+      "cost": "",
+      "values": {
+        "progress": "简历初筛",
+        "url": "",
+        "field-03d3ad5b-39a4-44d3-9dd6-eb1896a5c57f": "Agent开发",
+        "field-239dae3b-b40c-4698-a600-7dceab1384e7": "北京",
+        "field-37525936-363c-4936-93e0-c3494619ecb8": "牛客内推",
+        "field-480a45e3-86c5-4adc-a561-cc5392390aaf": "待反馈"
+      },
+      "order": 2,
+      "createdAt": "2026-11-23T08:36:28.771Z"
+    },
+    {
+      "id": "cffb8a0a-6b37-43cd-a1e0-0c6d27c57c86",
+      "title": "抖送",
+      "date": "__resident__",
+      "done": false,
+      "reason": "",
+      "followup": "",
+      "cost": "",
+      "values": {
+        "progress": "一面",
+        "url": "",
+        "field-37525936-363c-4936-93e0-c3494619ecb8": "boss投递",
+        "field-03d3ad5b-39a4-44d3-9dd6-eb1896a5c57f": "Agent开发",
+        "field-239dae3b-b40c-4698-a600-7dceab1384e7": "广州",
+        "field-480a45e3-86c5-4adc-a561-cc5392390aaf": "待反馈"
+      },
+      "order": 3,
+      "createdAt": "2026-11-23T12:58:25.655Z"
+    },
+    {
+      "id": "b64cd5e4-6480-4e9d-a4a9-644679f79eea",
+      "title": "赢云贸易",
+      "date": "__resident__",
+      "done": false,
+      "reason": "",
+      "followup": "",
+      "cost": "",
+      "values": {
+        "progress": "一面",
+        "field-37525936-363c-4936-93e0-c3494619ecb8": "boss投递",
+        "field-03d3ad5b-39a4-44d3-9dd6-eb1896a5c57f": "Agent岗位",
+        "field-239dae3b-b40c-4698-a600-7dceab1384e7": "杭州",
+        "field-480a45e3-86c5-4adc-a561-cc5392390aaf": "待反馈"
+      },
+      "order": 4,
+      "createdAt": "2026-11-23T13:40:54.083Z"
+    },
+    {
+      "id": "9fc5c1d8-6050-4429-b897-21a0160fe745",
+      "title": "比特鹰",
+      "date": "__resident__",
+      "done": false,
+      "reason": "",
+      "followup": "",
+      "cost": "",
+      "values": {
+        "progress": "一面",
+        "field-37525936-363c-4936-93e0-c3494619ecb8": "boss投递",
+        "field-03d3ad5b-39a4-44d3-9dd6-eb1896a5c57f": "全栈（偏前端）",
+        "field-239dae3b-b40c-4698-a600-7dceab1384e7": "广州",
+        "field-480a45e3-86c5-4adc-a561-cc5392390aaf": "挂掉"
+      },
+      "order": 6,
+      "createdAt": "2026-11-23T13:41:57.640Z"
+    },
+    {
+      "id": "005305e0-9101-47f5-b7a2-c7d34871edd2",
+      "title": "恪尽职守",
+      "date": "__resident__",
+      "done": false,
+      "reason": "",
+      "followup": "",
+      "cost": "",
+      "values": {
+        "progress": "一面",
+        "field-37525936-363c-4936-93e0-c3494619ecb8": "boss",
+        "field-03d3ad5b-39a4-44d3-9dd6-eb1896a5c57f": "Agent开发",
+        "field-239dae3b-b40c-4698-a600-7dceab1384e7": "深圳",
+        "field-480a45e3-86c5-4adc-a561-cc5392390aaf": "待反馈"
+      },
+      "order": 6,
+      "createdAt": "2026-11-23T13:44:48.130Z"
+    },
+    {
+      "id": "3f9638c4-0236-4275-8a11-30f82c93febb",
+      "title": "悦智人工智能-成都-笔试",
+      "date": null,
+      "done": false,
+      "reason": "",
+      "followup": "",
+      "cost": "",
+      "order": 1,
+      "createdAt": "2026-11-23T13:47:00.667Z"
+    },
+    {
+      "id": "36098479-537a-422a-bd0d-11409044fdab",
+      "title": "铮旗信息-上海-一面",
+      "date": null,
+      "done": false,
+      "reason": "",
+      "followup": "",
+      "cost": "",
+      "order": 2,
+      "createdAt": "2026-11-23T13:48:33.059Z"
+    },
+    {
+      "id": "e2680ba0-82c8-4a70-9f79-2823a9593a17",
+      "title": "纬致芯创-杭州-笔试",
+      "date": null,
+      "done": false,
+      "reason": "",
+      "followup": "",
+      "cost": "",
+      "order": 3,
+      "createdAt": "2026-11-23T13:49:59.339Z"
     }
   ]
 }

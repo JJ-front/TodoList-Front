@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import DayColumn from './components/DayColumn.jsx'
+import ResidentColumn from './components/ResidentColumn.jsx'
 import { IconCheck, IconChevron } from './components/Icons.jsx'
 import {
   addDays,
@@ -13,9 +14,16 @@ import {
   weekdayName,
 } from './lib/date.js'
 import { loadTodos, saveTodos } from './lib/store.js'
+import {
+  DEFAULT_RESIDENT_FIELDS,
+  DEFAULT_TASK_FIELDS,
+  RESIDENT_DATE,
+  makeFieldKey,
+} from './lib/fields.js'
 import './styles.css'
 
 const INBOX = '__inbox__'
+const RESIDENT = RESIDENT_DATE
 
 function makeId() {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID()
@@ -26,8 +34,18 @@ function sortSiblings(a, b) {
   return a.order - b.order || String(a.createdAt).localeCompare(String(b.createdAt))
 }
 
+function fieldFromDraft(field) {
+  return {
+    key: field?.key || makeFieldKey(),
+    label: field?.label || '新字段',
+    type: field?.type === 'link' ? 'link' : 'text',
+  }
+}
+
 export default function App() {
   const [todos, setTodos] = useState([])
+  const [residentFields, setResidentFields] = useState(DEFAULT_RESIDENT_FIELDS)
+  const [taskFields, setTaskFields] = useState(DEFAULT_TASK_FIELDS)
   const [source, setSource] = useState('loading') // loading | file | local
   const [saveState, setSaveState] = useState('idle') // idle | saving | saved | error
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()))
@@ -42,6 +60,8 @@ export default function App() {
     loadTodos().then((result) => {
       if (!alive) return
       setTodos(result.todos)
+      setResidentFields(result.residentFields)
+      setTaskFields(result.taskFields)
       setSource(result.source)
     })
     return () => {
@@ -57,11 +77,11 @@ export default function App() {
     }
     setSaveState('saving')
     const timer = setTimeout(async () => {
-      const ok = await saveTodos(todos)
+      const ok = await saveTodos(todos, residentFields, taskFields)
       setSaveState(ok ? 'saved' : 'error')
     }, 320)
     return () => clearTimeout(timer)
-  }, [todos, source])
+  }, [todos, residentFields, taskFields, source])
 
   const grouped = useMemo(() => {
     const map = new Map()
@@ -75,8 +95,10 @@ export default function App() {
   }, [todos])
 
   const stats = useMemo(() => {
-    const total = todos.length
-    const done = todos.filter((t) => t.done).length
+    // 常驻任务是长期跟进清单，不计入「今日 / 全部」完成度
+    const scheduled = todos.filter((t) => t.date !== RESIDENT)
+    const total = scheduled.length
+    const done = scheduled.filter((t) => t.done).length
     const todayList = grouped.get(todayKey) ?? []
     return {
       total,
@@ -84,6 +106,7 @@ export default function App() {
       todayTotal: todayList.length,
       todayDone: todayList.filter((t) => t.done).length,
       inbox: (grouped.get(INBOX) ?? []).length,
+      resident: (grouped.get(RESIDENT) ?? []).length,
     }
   }, [todos, grouped, todayKey])
 
@@ -102,6 +125,7 @@ export default function App() {
           reason: '',
           followup: '',
           cost: '',
+          ...(dateKey === RESIDENT ? { values: {} } : {}),
           order: siblings.length,
           createdAt: new Date().toISOString(),
         },
@@ -117,8 +141,56 @@ export default function App() {
     setTodos((prev) => prev.filter((t) => t.id !== id))
   }, [])
 
-  const setMeta = useCallback((id, field, value) => {
-    setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, [field]: value } : t)))
+  const setFieldValue = useCallback((id, key, value) => {
+    setTodos((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, values: { ...(t.values ?? {}), [key]: value } } : t,
+      ),
+    )
+  }, [])
+
+  const addResidentField = useCallback((field) => {
+    setResidentFields((prev) => [...prev, fieldFromDraft(field)])
+  }, [])
+
+  const updateResidentField = useCallback((key, patch) => {
+    setResidentFields((prev) =>
+      prev.map((field) => (field.key === key ? { ...field, ...patch } : field)),
+    )
+  }, [])
+
+  const removeResidentField = useCallback((key) => {
+    setResidentFields((prev) => prev.filter((field) => field.key !== key))
+    setTodos((prev) =>
+      prev.map((t) => {
+        if (t.date !== RESIDENT || !t.values || !(key in t.values)) return t
+        const values = { ...t.values }
+        delete values[key]
+        return { ...t, values }
+      }),
+    )
+  }, [])
+
+  const addTaskField = useCallback((field) => {
+    setTaskFields((prev) => [...prev, fieldFromDraft(field)])
+  }, [])
+
+  const updateTaskField = useCallback((key, patch) => {
+    setTaskFields((prev) =>
+      prev.map((field) => (field.key === key ? { ...field, ...patch } : field)),
+    )
+  }, [])
+
+  const removeTaskField = useCallback((key) => {
+    setTaskFields((prev) => prev.filter((field) => field.key !== key))
+    setTodos((prev) =>
+      prev.map((t) => {
+        if (t.date === RESIDENT || !t.values || !(key in t.values)) return t
+        const values = { ...t.values }
+        delete values[key]
+        return { ...t, values }
+      }),
+    )
   }, [])
 
   const renameTodo = useCallback((id, title) => {
@@ -166,7 +238,7 @@ export default function App() {
   const isThisWeek = isoDate(startOfWeek(today)) === isoDate(weekStart)
 
   const offView = useMemo(() => {
-    const inView = new Set([INBOX, ...days.map(isoDate)])
+    const inView = new Set([INBOX, RESIDENT, ...days.map(isoDate)])
     return todos.filter((t) => t.date && !inView.has(t.date)).length
   }, [todos, days])
 
@@ -202,6 +274,10 @@ export default function App() {
           <div className="stat">
             <strong>{stats.done}/{stats.total}</strong>
             <span>全部完成</span>
+          </div>
+          <div className="stat">
+            <strong>{stats.resident}</strong>
+            <span>常驻跟进</span>
           </div>
           <div className="stat stat--muted">
             <strong>{stats.inbox}</strong>
@@ -253,15 +329,32 @@ export default function App() {
           label="未安排"
           sublabel="拖入某一天来排期"
           todos={grouped.get(INBOX) ?? []}
+          fields={taskFields}
           onAdd={addTodo}
           onToggle={toggleTodo}
           onRemove={removeTodo}
           onRename={renameTodo}
-          onMeta={setMeta}
+          onMeta={setFieldValue}
           onMove={moveTodo}
+          onFieldAdd={addTaskField}
+          onFieldUpdate={updateTaskField}
+          onFieldRemove={removeTaskField}
           draggingId={dragId}
           onDragStart={setDragId}
           onDragEnd={() => setDragId(null)}
+        />
+
+        <ResidentColumn
+          dateKey={RESIDENT}
+          todos={grouped.get(RESIDENT) ?? []}
+          fields={residentFields}
+          onAdd={addTodo}
+          onRemove={removeTodo}
+          onRename={renameTodo}
+          onMeta={setFieldValue}
+          onFieldAdd={addResidentField}
+          onFieldUpdate={updateResidentField}
+          onFieldRemove={removeResidentField}
         />
 
         {days.map((date) => {
@@ -278,11 +371,12 @@ export default function App() {
               isToday={key === todayKey}
               isWeekend={date.getDay() === 0 || date.getDay() === 6}
               todos={grouped.get(key) ?? []}
+              fields={taskFields}
               onAdd={addTodo}
               onToggle={toggleTodo}
               onRemove={removeTodo}
               onRename={renameTodo}
-              onMeta={setMeta}
+              onMeta={setFieldValue}
               onMove={moveTodo}
               draggingId={dragId}
               onDragStart={setDragId}

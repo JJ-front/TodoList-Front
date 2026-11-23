@@ -45,6 +45,8 @@ function todosFileApiPlugin() {
           const payload = {
             version: 1,
             updatedAt: new Date().toISOString(),
+            residentFields: Array.isArray(parsed.residentFields) ? parsed.residentFields : [],
+            taskFields: Array.isArray(parsed.taskFields) ? parsed.taskFields : [],
             todos: Array.isArray(parsed.todos) ? parsed.todos : [],
           }
           fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true })
